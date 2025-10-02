@@ -1,0 +1,18 @@
+# Node
+/node_modules
+/dist
+/build
+/coverage
+
+# NestJS
+.eslintcache
+.jest-cache
+.tsbuildinfo
+
+# ReactJS
+.env
+!.env.example
+/frontend/dist
+
+# Docker
+.dockerignore
