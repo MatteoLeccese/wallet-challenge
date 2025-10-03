@@ -11,6 +11,7 @@ import { Wallet } from './wallets/entities/wallet.entity';
 import { PaymentSession } from './payments/entities/payment-session.entity';
 import { Transaction } from './payments/entities/transaction.entity';
 import { AuthModule } from './auth/auth.module';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AuthModule } from './auth/auth.module';
     WalletsModule,
     PaymentsModule,
     AuthModule,
+    MailerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

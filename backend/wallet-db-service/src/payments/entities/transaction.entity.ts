@@ -30,6 +30,9 @@ export class Transaction {
   })
   wallet: Wallet | null;
 
+  @Column({ type: 'int', nullable: true })
+  referenceId?: number;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

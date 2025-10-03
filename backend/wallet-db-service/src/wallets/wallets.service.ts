@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Wallet } from './entities/wallet.entity';
 import { Repository } from 'typeorm';
 import { Customer } from 'src/clients/entities/customer.entity';
-import { TopUpWalletDto } from './entities/topup-wallet.dto';
+import { TopUpWalletDto } from './interfaces/topup-wallet.dto';
 import { TransactionType } from 'src/payments/types/transaction.interfaces';
 import { Transaction } from 'src/payments/entities/transaction.entity';
 

@@ -32,8 +32,11 @@ export class Wallet {
   @OneToMany(() => Transaction, (transaction) => transaction.wallet)
   transactions: Transaction[];
 
-  @OneToMany(() => PaymentSession, (ps) => ps.wallet)
-  paymentSessions: PaymentSession[];
+  @OneToMany(() => PaymentSession, (session) => session.fromWallet)
+  outgoingPayments: PaymentSession[];
+
+  @OneToMany(() => PaymentSession, (session) => session.toWallet)
+  incomingPayments: PaymentSession[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -9,6 +9,7 @@ import {
   DeleteDateColumn,
   Index,
 } from 'typeorm';
+import { PaymentSessionStatus } from '../types/session.interfaces';
 
 @Entity('payment_sessions')
 export class PaymentSession {
@@ -19,18 +20,32 @@ export class PaymentSession {
   @Column({ type: 'char', length: 6 })
   token: string;
 
-  @Column({ type: 'boolean', default: false })
-  confirmed: boolean;
+  @Column({
+    type: 'enum',
+    enum: PaymentSessionStatus,
+    default: PaymentSessionStatus.PENDING,
+  })
+  status: PaymentSessionStatus;
 
   @Column({ type: 'decimal', precision: 15, scale: 2 })
   amount: string;
 
-  @ManyToOne(() => Wallet, (wallet) => wallet.paymentSessions, {
+  @ManyToOne(() => Wallet, (wallet) => wallet.outgoingPayments, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
     nullable: true,
   })
-  wallet: Wallet | null;
+  fromWallet: Wallet | null;
+
+  @ManyToOne(() => Wallet, (wallet) => wallet.incomingPayments, {
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+    nullable: true,
+  })
+  toWallet: Wallet | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  expiresAt: Date | null;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
