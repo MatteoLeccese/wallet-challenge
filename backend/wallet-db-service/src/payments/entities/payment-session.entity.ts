@@ -1,39 +1,43 @@
-import { DecimalTransformer } from 'src/common/decimal.transformer';
 import { Wallet } from 'src/wallets/entities/wallet.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
   ManyToOne,
+  CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
+  Index,
 } from 'typeorm';
-import { type SessionStatus } from '../types/session.interfaces';
 
 @Entity('payment_sessions')
 export class PaymentSession {
-  @PrimaryGeneratedColumn('uuid') id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @ManyToOne(() => Wallet, { nullable: false })
-  sourceWallet: Wallet;
+  @Index()
+  @Column({ type: 'char', length: 6 })
+  token: string;
 
-  @ManyToOne(() => Wallet, { nullable: true })
-  targetWallet?: Wallet;
+  @Column({ type: 'boolean', default: false })
+  confirmed: boolean;
 
-  @Column('decimal', {
-    precision: 14,
-    scale: 2,
-    transformer: DecimalTransformer,
+  @Column({ type: 'decimal', precision: 15, scale: 2 })
+  amount: string;
+
+  @ManyToOne(() => Wallet, (wallet) => wallet.paymentSessions, {
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+    nullable: true,
   })
-  amount: number;
+  wallet: Wallet | null;
 
-  @Column({ length: 6 }) token: string;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @Column() tokenExpiresAt: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @Column() status: SessionStatus;
-
-  @CreateDateColumn() createdAt: Date;
-
-  @UpdateDateColumn() updatedAt: Date;
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date | null;
 }

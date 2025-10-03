@@ -1,41 +1,45 @@
+import { Wallet } from 'src/wallets/entities/wallet.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
   ManyToOne,
+  CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
+  Index,
 } from 'typeorm';
-import { Wallet } from 'src/wallets/entities/wallet.entity';
-import {
-  type TransactionStatus,
-  type TransactionType,
-} from 'src/payments/types/transaction.interfaces';
-import { DecimalTransformer } from 'src/common/decimal.transformer';
-import { PaymentSession } from './payment-session.entity';
+
+export enum TransactionType {
+  TOP_UP = 'TOP_UP',
+  PAYMENT = 'PAYMENT',
+}
 
 @Entity('transactions')
 export class Transaction {
-  @PrimaryGeneratedColumn('uuid') id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @ManyToOne(() => Wallet, (wallet) => wallet.transactions)
-  wallet: Wallet;
+  @Index()
+  @Column({ type: 'enum', enum: TransactionType })
+  type: TransactionType;
 
-  @Column() type: TransactionType;
+  @Column({ type: 'decimal', precision: 15, scale: 2 })
+  amount: string;
 
-  @Column('decimal', {
-    precision: 14,
-    scale: 2,
-    transformer: DecimalTransformer,
+  @ManyToOne(() => Wallet, (wallet) => wallet.transactions, {
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+    nullable: true,
   })
-  amount: number;
+  wallet: Wallet | null;
 
-  @Column() status: TransactionStatus;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @ManyToOne(() => PaymentSession, { nullable: true })
-  paymentSession?: PaymentSession;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @CreateDateColumn() createdAt: Date;
-
-  @UpdateDateColumn() updatedAt: Date;
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date | null;
 }

@@ -1,37 +1,46 @@
+import { Customer } from 'src/clients/entities/customer.entity';
+import { PaymentSession } from 'src/payments/entities/payment-session.entity';
+import { Transaction } from 'src/payments/entities/transaction.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  UpdateDateColumn,
   OneToOne,
   JoinColumn,
   OneToMany,
   CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
-import { Customer } from 'src/clients/entities/customer.entity';
-import { DecimalTransformer } from 'src/common/decimal.transformer';
-import { Transaction } from 'src/payments/entities/transaction.entity';
 
 @Entity('wallets')
 export class Wallet {
-  @PrimaryGeneratedColumn('uuid') id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @OneToOne(() => Customer, (customer) => customer.wallet)
-  @JoinColumn()
-  customer: Customer;
+  @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  balance: string;
 
-  @Column('decimal', {
-    precision: 14,
-    scale: 2,
-    transformer: DecimalTransformer,
-    default: 0,
+  @OneToOne(() => Customer, (customer) => customer.wallet, {
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+    nullable: true,
   })
-  balance: number;
-
-  @CreateDateColumn() createdAt: Date;
-
-  @UpdateDateColumn() updatedAt: Date;
+  @JoinColumn({ name: 'customer_id' })
+  customer: Customer | null;
 
   @OneToMany(() => Transaction, (transaction) => transaction.wallet)
   transactions: Transaction[];
+
+  @OneToMany(() => PaymentSession, (ps) => ps.wallet)
+  paymentSessions: PaymentSession[];
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date | null;
 }

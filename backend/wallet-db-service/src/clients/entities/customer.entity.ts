@@ -1,29 +1,44 @@
+import { Wallet } from 'src/wallets/entities/wallet.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
   OneToOne,
-  Unique,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  Index,
 } from 'typeorm';
-import { Wallet } from 'src/wallets/entities/wallet.entity';
 
 @Entity('customers')
-@Unique(['document'])
-@Unique(['email'])
 export class Customer {
-  @PrimaryGeneratedColumn('uuid') id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ unique: true }) document: string;
+  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 50 })
+  document: string;
 
-  @Column() fullName: string;
+  @Column({ type: 'varchar', length: 150 })
+  names: string;
 
-  @Column({ unique: true }) email: string;
+  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 150 })
+  email: string;
 
-  @Column() phone: string;
-
-  @CreateDateColumn() createdAt: Date;
+  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 30 })
+  phone: string;
 
   @OneToOne(() => Wallet, (wallet) => wallet.customer)
   wallet: Wallet;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date | null;
 }

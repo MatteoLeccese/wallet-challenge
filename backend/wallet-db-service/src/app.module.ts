@@ -5,13 +5,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from './clients/clients.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { PaymentsModule } from './payments/payments.module';
+import { ConfigModule } from '@nestjs/config';
 import { Customer } from './clients/entities/customer.entity';
 import { Wallet } from './wallets/entities/wallet.entity';
-import { Transaction } from './payments/entities/transaction.entity';
 import { PaymentSession } from './payments/entities/payment-session.entity';
+import { Transaction } from './payments/entities/transaction.entity';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.MYSQL_HOST,
@@ -20,7 +22,8 @@ import { PaymentSession } from './payments/entities/payment-session.entity';
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DB,
       entities: [Customer, Wallet, Transaction, PaymentSession],
-      synchronize: true, // Only for development purposes
+      synchronize: true,
+      migrationsRun: true,
     }),
     ClientsModule,
     WalletsModule,
