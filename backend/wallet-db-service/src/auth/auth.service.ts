@@ -63,7 +63,17 @@ export class AuthService {
         password: hashedPassword,
       });
 
-      return { message: 'Customer registered successfully', customer };
+      // Return success message and customer info
+      return {
+        message: 'Customer registered successfully',
+        customer: {
+          id: customer.id,
+          names: customer.names,
+          email: customer.email,
+          document: customer.document,
+          phone: customer.phone,
+        },
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
