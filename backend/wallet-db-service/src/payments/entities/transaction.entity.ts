@@ -9,11 +9,7 @@ import {
   DeleteDateColumn,
   Index,
 } from 'typeorm';
-
-export enum TransactionType {
-  TOP_UP = 'TOP_UP',
-  PAYMENT = 'PAYMENT',
-}
+import { TransactionType } from '../types/transaction.interfaces';
 
 @Entity('transactions')
 export class Transaction {
