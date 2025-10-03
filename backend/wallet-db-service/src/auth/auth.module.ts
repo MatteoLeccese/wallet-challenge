@@ -3,10 +3,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { ClientsModule } from 'src/clients/clients.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
     ClientsModule,
+    PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET ?? 'your_jwt_secret_key',
       signOptions: {
@@ -15,6 +18,6 @@ import { ClientsModule } from 'src/clients/clients.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

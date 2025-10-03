@@ -6,12 +6,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
 import { PaymentSession } from './entities/payment-session.entity';
 import { Wallet } from 'src/wallets/entities/wallet.entity';
 import { Customer } from 'src/clients/entities/customer.entity';
 import { Transaction } from './entities/transaction.entity';
-
 import { InitiatePaymentDto } from './types/initiate-payment.dto';
 import { ConfirmPaymentDto } from './types/confirm-payment.dto';
 import { PaymentSessionStatus } from './types/session.interfaces';
@@ -48,19 +46,19 @@ export class PaymentsService {
   }
 
   // Initiate a payment session
-  async initiatePayment(dto: InitiatePaymentDto) {
+  async initiatePayment(userId: number, dto: InitiatePaymentDto) {
     // Destructure input
-    const { fromDocument, fromPhone, toDocument, toPhone, amount } = dto;
+    const { toDocument, toPhone, amount } = dto;
 
-    // Find both customers and their wallets
+    // Find the paying customer (the current user)
     const fromCustomer = await this.customerRepo.findOne({
-      where: { document: fromDocument, phone: fromPhone },
+      where: { id: userId },
       relations: ['wallet'],
     });
+
+    // VAlidate the payer and wallet
     if (!fromCustomer || !fromCustomer.wallet) {
-      throw new NotFoundException(
-        'Payer not found with given document and phone',
-      );
+      throw new NotFoundException('Payer wallet not found');
     }
 
     // Find the receiver
@@ -229,6 +227,62 @@ export class PaymentsService {
         amount: amount.toFixed(2),
         fromWalletId: fromWallet.id,
         toWalletId: toWallet.id,
+      },
+    };
+  }
+
+  // Get client balance
+  async getBalance(userId: number) {
+    // Find the current user's customer and wallet
+    const customer = await this.customerRepo.findOne({
+      where: { id: userId },
+      relations: ['wallet'],
+    });
+
+    // If the customer or wallet is not found we throw an error
+    if (!customer || !customer.wallet) {
+      throw new NotFoundException(
+        'Customer not found with given document and phone',
+      );
+    }
+
+    // Fetch the wallet with relations
+    const wallet = await this.walletRepo.findOne({
+      where: { id: customer.wallet.id },
+      relations: ['transactions', 'outgoingPayments', 'incomingPayments'],
+    });
+
+    // If the wallet is not found we throw an error
+    if (!wallet) {
+      throw new NotFoundException('Wallet not found for this customer');
+    }
+
+    // Return the balance
+    return {
+      message: 'Balance retrieved successfully',
+      data: {
+        customerId: customer.id,
+        walletId: wallet.id,
+        balance: wallet.balance,
+        transactions: wallet.transactions.map((transaction) => ({
+          id: transaction.id,
+          type: transaction.type,
+          amount: transaction.amount,
+          referenceId: transaction.referenceId,
+          createdAt: transaction.createdAt,
+        })),
+        outgoingPayments: wallet.outgoingPayments.map((outgoingPayment) => ({
+          id: outgoingPayment.id,
+          amount: outgoingPayment.amount,
+          status: outgoingPayment.status,
+          createdAt: outgoingPayment.createdAt,
+        })),
+        incomingPayments: wallet.incomingPayments.map((incomingPayment) => ({
+          id: incomingPayment.id,
+          amount: incomingPayment.amount,
+          status: incomingPayment.status,
+          createdAt: incomingPayment.createdAt,
+        })),
       },
     };
   }
