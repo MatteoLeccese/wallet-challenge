@@ -10,6 +10,7 @@ import { Customer } from './clients/entities/customer.entity';
 import { Wallet } from './wallets/entities/wallet.entity';
 import { PaymentSession } from './payments/entities/payment-session.entity';
 import { Transaction } from './payments/entities/transaction.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { Transaction } from './payments/entities/transaction.entity';
     ClientsModule,
     WalletsModule,
     PaymentsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

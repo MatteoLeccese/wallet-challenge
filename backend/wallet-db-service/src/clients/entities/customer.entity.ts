@@ -30,6 +30,9 @@ export class Customer {
   @Column({ type: 'varchar', length: 30 })
   phone: string;
 
+  @Column()
+  password: string; // hashed password
+
   @OneToOne(() => Wallet, (wallet) => wallet.customer)
   wallet: Wallet;
 
