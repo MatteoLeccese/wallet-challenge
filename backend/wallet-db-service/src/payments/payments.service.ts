@@ -15,6 +15,8 @@ import { ConfirmPaymentDto } from './types/confirm-payment.dto';
 import { PaymentSessionStatus } from './types/session.interfaces';
 import { TransactionType } from './types/transaction.interfaces';
 import { MailerService } from 'src/mailer/mailer.service';
+import { ConfirmPurchaseDto } from './types/confirm-purchase.dto';
+import { InitiatePurchaseDto } from './types/initiate-purchase.dto';
 
 const TOKEN_EXP_MINUTES = 5;
 
@@ -227,6 +229,148 @@ export class PaymentsService {
         amount: amount.toFixed(2),
         fromWalletId: fromWallet.id,
         toWalletId: toWallet.id,
+      },
+    };
+  }
+
+  // Initiate a purchase session
+  async initiatePurchase(userId: number, dto: InitiatePurchaseDto) {
+    // Extracting the amount from the DTO
+    const { amount } = dto;
+
+    // Find the customer and their wallet
+    const customer = await this.customerRepo.findOne({
+      where: { id: userId },
+      relations: ['wallet'],
+    });
+
+    // Validate customer and wallet
+    if (!customer || !customer.wallet) {
+      throw new NotFoundException('Wallet not found');
+    }
+
+    // Validate amount and balance
+    const balance = parseFloat(customer.wallet.balance.toString());
+    if (amount <= 0) {
+      throw new BadRequestException('Amount must be greater than zero');
+    }
+    if (balance < amount) {
+      throw new ForbiddenException('Insufficient balance');
+    }
+
+    // Generate the payment session token
+    const token = this.generateToken();
+
+    // Create the payment session
+    const session = this.paymentSessionRepo.create({
+      fromWallet: customer.wallet,
+      toWallet: null,
+      amount: amount.toFixed(2),
+      status: PaymentSessionStatus.PENDING,
+      token,
+      expiresAt: this.computeExpiration(TOKEN_EXP_MINUTES),
+    });
+
+    // Save the payment session
+    const saved = await this.paymentSessionRepo.save(session);
+
+    // Sends the email with the token
+    await this.mailerService.sendPaymentToken(customer.email, token, saved.id);
+
+    return {
+      message: 'Purchase session created and token sent to your email',
+      data: {
+        sessionId: saved.id,
+        expiresAt: saved.expiresAt,
+      },
+    };
+  }
+
+  // Confirm a purchase session
+  async confirmPurchase(userId: number, dto: ConfirmPurchaseDto) {
+    // Destructure input
+    const { sessionId, token } = dto;
+
+    // Find the purchase session
+    const session = await this.paymentSessionRepo.findOne({
+      where: { id: sessionId },
+      relations: ['fromWallet', 'fromWallet.customer'],
+    });
+
+    // Validate session existence
+    if (!session) {
+      throw new NotFoundException('Purchase session not found');
+    }
+
+    // Validate session status
+    if (session.status !== PaymentSessionStatus.PENDING) {
+      throw new BadRequestException('Session not pending');
+    }
+
+    // Check for expiration
+    if (!session.expiresAt || new Date() > new Date(session.expiresAt)) {
+      session.status = PaymentSessionStatus.EXPIRED;
+      await this.paymentSessionRepo.save(session);
+      throw new BadRequestException('Purchase session expired');
+    }
+
+    // Validate token
+    if (token !== session.token) {
+      throw new ForbiddenException('Invalid token');
+    }
+
+    // Validate the session belongs to the user
+    if (!session.fromWallet || session.fromWallet.customer?.id !== userId) {
+      throw new ForbiddenException(
+        'This purchase does not belong to the current user',
+      );
+    }
+
+    // Fetch the latest wallet data
+    const wallet = await this.walletRepo.findOne({
+      where: { id: session.fromWallet.id },
+    });
+
+    // Validate wallet existence
+    if (!wallet) {
+      throw new NotFoundException('Wallet not found');
+    }
+
+    // Check for sufficient balance
+    const balance = parseFloat(wallet.balance.toString());
+    const amount = parseFloat(session.amount.toString());
+    if (balance < amount) {
+      session.status = PaymentSessionStatus.FAILED;
+      await this.paymentSessionRepo.save(session);
+      throw new ForbiddenException('Insufficient balance');
+    }
+
+    // Deduct balance and save
+    wallet.balance = (balance - amount).toFixed(2);
+    await this.walletRepo.save(wallet);
+
+    // Register the transaction
+    const transaction = this.transactionRepo.create({
+      type: TransactionType.PURCHASE,
+      amount: amount.toFixed(2),
+      wallet,
+      referenceId: session.id,
+    });
+
+    // Save the transaction
+    await this.transactionRepo.save(transaction);
+
+    // Update session status to CONFIRMED
+    session.status = PaymentSessionStatus.CONFIRMED;
+    await this.paymentSessionRepo.save(session);
+
+    return {
+      message: 'Purchase confirmed successfully',
+      data: {
+        sessionId: session.id,
+        amount: amount.toFixed(2),
+        walletId: wallet.id,
+        newBalance: wallet.balance,
       },
     };
   }
