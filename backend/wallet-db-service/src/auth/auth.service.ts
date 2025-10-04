@@ -29,8 +29,6 @@ export class AuthService {
     // Comparing the passwords
     const isMatch = await bcrypt.compare(pass, customer.password);
 
-    console.log(isMatch);
-
     // If they don't match, throw an exception
     if (!isMatch) {
       throw new UnauthorizedException('Invalid credentials');

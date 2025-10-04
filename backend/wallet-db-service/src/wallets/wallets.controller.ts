@@ -6,7 +6,9 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { PaymentsService } from 'src/payments/payments.service';
 import { type CurrentUserData } from 'src/auth/interfaces/current-user.interface';
 import { OtherBalanceQueryDto } from 'src/payments/types/other-balance-query.dto';
+import { SystemApiKeyGuard } from 'src/auth/guards/system-api-key.guard';
 
+@UseGuards(SystemApiKeyGuard)
 @Controller('wallets')
 export class WalletsController {
   constructor(

@@ -7,7 +7,9 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { type CurrentUserData } from 'src/auth/interfaces/current-user.interface';
 import { InitiatePurchaseDto } from './types/initiate-purchase.dto';
 import { ConfirmPurchaseDto } from './types/confirm-purchase.dto';
+import { SystemApiKeyGuard } from 'src/auth/guards/system-api-key.guard';
 
+@UseGuards(SystemApiKeyGuard)
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
