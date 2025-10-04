@@ -5,6 +5,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { PaymentsService } from 'src/payments/payments.service';
 import { type CurrentUserData } from 'src/auth/interfaces/current-user.interface';
+import { OtherBalanceQueryDto } from 'src/payments/types/other-balance-query.dto';
 
 @Controller('wallets')
 export class WalletsController {
@@ -23,5 +24,11 @@ export class WalletsController {
   @Get('balance')
   getBalance(@CurrentUser() user: CurrentUserData) {
     return this.paymentsService.getBalance(user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('balance/specific')
+  getSpecificUserBalance(@Body() dto: OtherBalanceQueryDto) {
+    return this.paymentsService.getSpecificUserBalance(dto);
   }
 }

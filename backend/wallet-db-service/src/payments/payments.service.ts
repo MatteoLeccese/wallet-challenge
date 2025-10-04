@@ -17,6 +17,7 @@ import { TransactionType } from './types/transaction.interfaces';
 import { MailerService } from 'src/mailer/mailer.service';
 import { ConfirmPurchaseDto } from './types/confirm-purchase.dto';
 import { InitiatePurchaseDto } from './types/initiate-purchase.dto';
+import { OtherBalanceQueryDto } from './types/other-balance-query.dto';
 
 const TOKEN_EXP_MINUTES = 5;
 
@@ -426,6 +427,52 @@ export class PaymentsService {
           amount: incomingPayment.amount,
           status: incomingPayment.status,
           createdAt: incomingPayment.createdAt,
+        })),
+      },
+    };
+  }
+
+  // Get specific user's balance by document and phone
+  async getSpecificUserBalance(dto: OtherBalanceQueryDto) {
+    // Destructure input
+    const { document, phone } = dto;
+
+    // Find the specific customer's wallet
+    const customer = await this.customerRepo.findOne({
+      where: { document, phone },
+      relations: ['wallet'],
+    });
+
+    // If the customer or wallet is not found we throw an error
+    if (!customer || !customer.wallet) {
+      throw new NotFoundException(
+        'Customer not found with given document and phone',
+      );
+    }
+
+    // Fetch the wallet with relations
+    const wallet = await this.walletRepo.findOne({
+      where: { id: customer.wallet.id },
+      relations: ['transactions'],
+    });
+
+    // If the wallet is not found we throw an error
+    if (!wallet) {
+      throw new NotFoundException('Wallet not found for this customer');
+    }
+
+    return {
+      message: 'Specific user balance retrieved successfully',
+      data: {
+        customerId: customer.id,
+        walletId: wallet.id,
+        balance: wallet.balance,
+        transactions: wallet.transactions.map((transaction) => ({
+          id: transaction.id,
+          type: transaction.type,
+          amount: transaction.amount,
+          referenceId: transaction.referenceId,
+          createdAt: transaction.createdAt,
         })),
       },
     };
