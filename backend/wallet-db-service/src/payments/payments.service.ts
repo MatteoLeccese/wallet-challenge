@@ -405,30 +405,28 @@ export class PaymentsService {
     // Return the balance
     return {
       message: 'Balance retrieved successfully',
-      data: {
-        customerId: customer.id,
-        walletId: wallet.id,
-        balance: wallet.balance,
-        transactions: wallet.transactions.map((transaction) => ({
-          id: transaction.id,
-          type: transaction.type,
-          amount: transaction.amount,
-          referenceId: transaction.referenceId,
-          createdAt: transaction.createdAt,
-        })),
-        outgoingPayments: wallet.outgoingPayments.map((outgoingPayment) => ({
-          id: outgoingPayment.id,
-          amount: outgoingPayment.amount,
-          status: outgoingPayment.status,
-          createdAt: outgoingPayment.createdAt,
-        })),
-        incomingPayments: wallet.incomingPayments.map((incomingPayment) => ({
-          id: incomingPayment.id,
-          amount: incomingPayment.amount,
-          status: incomingPayment.status,
-          createdAt: incomingPayment.createdAt,
-        })),
-      },
+      customerId: customer.id,
+      walletId: wallet.id,
+      balance: wallet.balance,
+      transactions: wallet.transactions.map((transaction) => ({
+        id: transaction.id,
+        type: transaction.type,
+        amount: transaction.amount,
+        referenceId: transaction.referenceId,
+        createdAt: transaction.createdAt,
+      })),
+      outgoingPayments: wallet.outgoingPayments.map((outgoingPayment) => ({
+        id: outgoingPayment.id,
+        amount: outgoingPayment.amount,
+        status: outgoingPayment.status,
+        createdAt: outgoingPayment.createdAt,
+      })),
+      incomingPayments: wallet.incomingPayments.map((incomingPayment) => ({
+        id: incomingPayment.id,
+        amount: incomingPayment.amount,
+        status: incomingPayment.status,
+        createdAt: incomingPayment.createdAt,
+      })),
     };
   }
 

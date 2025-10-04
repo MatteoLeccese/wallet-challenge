@@ -45,7 +45,7 @@ export class ProxyService {
         .request<T>({
           method,
           url: `${walletDbUrl}${path}`,
-          data: body,
+          data: body ?? {},
           headers,
         })
         .pipe(timeout(2000)),

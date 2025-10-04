@@ -18,7 +18,7 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       token: null,
-      loading: true,
+      loading: false,
       setUser: (user) => set({ user }),
       setToken: (token) => {
         if (token) {
@@ -30,7 +30,7 @@ export const useAuthStore = create<AuthState>()(
       },
       login: (user, token) => {
         sessionStorage.setItem('wallet_token', token);
-        set({ user, token });
+        set({ user, token, loading: false });
       },
       logout: () => {
         sessionStorage.removeItem('wallet_token');
