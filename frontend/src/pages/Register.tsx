@@ -58,7 +58,6 @@ export const Register = () => {
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.log('error', error);
       showToast(error?.message ?? 'Error while trying the user', 'error');
     } finally {
       setLoading(false);

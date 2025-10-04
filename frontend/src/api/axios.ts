@@ -17,13 +17,13 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response.data,
+  (response) => response.data.data,
   (error) => {
     if (error.response) {
       return Promise.reject(error.response.data);
     }
     return Promise.reject({
-      statusCode: 500,
+      statusCode: error?.response?.statusCode ?? 500,
       message: null,
       error: 'Error de conexión con el servidor',
       data: null,
