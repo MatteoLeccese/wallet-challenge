@@ -1,4 +1,3 @@
-// src/common/filters/all-exceptions.filter.ts
 import {
   ExceptionFilter,
   Catch,
@@ -6,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { AxiosError } from 'axios';
 
 const DEFAULT_STATUS = HttpStatus.INTERNAL_SERVER_ERROR;
 const DEFAULT_ERROR_MESSAGE = 'Internal server error';
@@ -45,6 +45,23 @@ export class AllExceptionsFilter implements ExceptionFilter {
         message = exception.message;
         error = exception.name;
       }
+    } else if (exception instanceof AxiosError) {
+      status = exception.response?.status ?? DEFAULT_STATUS;
+      const data = exception.response?.data;
+      if (data) {
+        status = data.statusCode ?? status;
+        message = data.message ?? DEFAULT_ERROR_MESSAGE;
+        error = data.error ?? 'UpstreamError';
+      } else {
+        message = exception.message;
+        error = exception.name;
+      }
+    } else if (exception && typeof exception === 'object') {
+      const err = exception as any;
+      status = err.status ?? err.response?.status ?? DEFAULT_STATUS;
+      message =
+        err.response?.data?.message ?? err.message ?? DEFAULT_ERROR_MESSAGE;
+      error = err.response?.data?.error ?? err.name ?? DEFAULT_ERROR_TYPE;
     }
 
     response.status(status).json({

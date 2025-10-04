@@ -61,4 +61,28 @@ export class ClientsService {
       relations: ['wallet'],
     });
   }
+
+  async findByUniqueFields(
+    email?: string,
+    document?: string,
+    phone?: string,
+  ): Promise<Customer | null> {
+    // Array of conditions to search for
+    const where: any[] = [];
+
+    // Add conditions based on provided fields
+    if (email) where.push({ email });
+    if (document) where.push({ document });
+    if (phone) where.push({ phone });
+
+    // If no conditions are provided, return null
+    if (where.length === 0) {
+      return null;
+    }
+
+    // Find and return the first matching customer
+    return this.customerRepository.findOne({
+      where,
+    });
+  }
 }

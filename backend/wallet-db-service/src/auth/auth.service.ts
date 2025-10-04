@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   HttpException,
   Injectable,
   UnauthorizedException,
@@ -41,11 +42,17 @@ export class AuthService {
   // Function to register a new customer
   async register(dto: CreateCustomerDto) {
     // find if customer with email already exists
-    const oldCustomer = await this.clientsService.findByEmail(dto.email);
+    const oldCustomer = await this.clientsService.findByUniqueFields(
+      dto.email,
+      dto.document,
+      dto.phone,
+    );
 
     // If a customer is found, throw an exception
     if (oldCustomer) {
-      throw new UnauthorizedException('Email already in use');
+      throw new ConflictException(
+        'A customer with the same email, document or phone already exists',
+      );
     }
 
     // Create the salt for the password
