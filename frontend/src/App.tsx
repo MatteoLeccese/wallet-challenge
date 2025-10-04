@@ -3,6 +3,7 @@ import { Register } from './pages/Register';
 import { Login } from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Dashboard } from './pages/Dashboard';
+import { ToastContainer } from './components/ToastContainer';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         />
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
+      <ToastContainer />
     </BrowserRouter>
   );
 }

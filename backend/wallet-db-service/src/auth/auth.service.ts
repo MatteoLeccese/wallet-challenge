@@ -106,6 +106,8 @@ export class AuthService {
           id: customer.id,
           names: customer.names,
           email: customer.email,
+          document: customer.document,
+          phone: customer.phone,
         },
       };
     } catch {
