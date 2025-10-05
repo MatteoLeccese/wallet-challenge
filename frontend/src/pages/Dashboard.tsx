@@ -4,6 +4,15 @@ import { LogOut, Wallet, Plus, ShoppingCart, Send, History, Search } from 'lucid
 import { useAuthStore } from '../store/authStore';
 import { useToastStore } from '../store/toastStore';
 import { apiService } from '../services/api';
+import { RechargeModal } from '../components/RechargeModal';
+import { PurchaseModal } from '../components/PurchaseModal';
+import { ConfirmModal } from '../components/ConfirmModal';
+import { PaymentModal } from '../components/PaymentModal';
+import { TransactionHistory } from '../components/TransactionHistory';
+import type { Transactions } from '../types/payments.interfaces';
+import { unifyTransactions } from '../utils/utils';
+import { BalanceQueryModal } from '../components/BalanceQueryModal';
+
 
 export const Dashboard = () => {
   // Hook to navigate
@@ -18,8 +27,22 @@ export const Dashboard = () => {
   // Balance state
   const [balance, setBalance] = useState<number | string>(0);
 
+  // Transactions state
+  const [transactions, setTransactions] = useState<Transactions[]>([]);
+
   // Loading state
   const [loading, setLoading] = useState(true);
+
+  // Modals
+  const [showRechargeModal, setShowRechargeModal] = useState(false);
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showBalanceQueryModal, setShowBalanceQueryModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+
+  // Confirmation data state
+  const [confirmDataType, setConfirmDataType] = useState<'purchase' | 'payment' | null>(null);
 
   // Fetch balance function
   const fetchBalance = useCallback(async () => {
@@ -27,7 +50,14 @@ export const Dashboard = () => {
       const response = await apiService.getBalance();
 
       if (response.statusCode === 200) {
+        // Setting the balance
         setBalance(response.data.balance);
+
+        // Getting the unified transactions
+        const totalTransactions: Transactions[] = unifyTransactions(response.data.transactions, response.data.incomingPayments, response.data.outgoingPayments);
+
+        // Setting the transactions
+        setTransactions(totalTransactions);
       }
     } catch {
       showToast('An error occurred trying to fetch the balance', 'success');
@@ -40,6 +70,29 @@ export const Dashboard = () => {
     logout();
     navigate('/login');
     showToast('User logged out successfully', 'success');
+  };
+
+  const handleRechargeSuccess = () => {
+    setShowRechargeModal(false);
+    fetchBalance();
+  };
+
+  const handlePurchaseSuccess = () => {
+    setShowPurchaseModal(false);
+    setConfirmDataType('purchase');
+    setShowConfirmModal(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPaymentModal(false);
+    setConfirmDataType('payment');
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmSuccess = () => {
+    setShowConfirmModal(false);
+    setConfirmDataType(null);
+    fetchBalance();
   };
 
   useEffect(() => {
@@ -80,7 +133,7 @@ export const Dashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <p className="text-white/80 text-sm font-medium">Saldo Disponible</p>
             <button
-              onClick={() => {}}
+              onClick={() => setShowHistoryModal(true)}
               className="flex items-center gap-2 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-white text-sm"
             >
               <History className="w-4 h-4" />
@@ -100,7 +153,7 @@ export const Dashboard = () => {
         {/* Action Buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <button
-            onClick={() => {}}
+            onClick={() => setShowRechargeModal(true)}
             className="card hover:shadow-xl transition-all duration-200 group"
           >
             <div className="flex items-center gap-4">
@@ -115,7 +168,7 @@ export const Dashboard = () => {
           </button>
 
           <button
-            onClick={() => {}}
+            onClick={() => setShowPurchaseModal(true)}
             className="card hover:shadow-xl transition-all duration-200 group"
           >
             <div className="flex items-center gap-4">
@@ -130,7 +183,7 @@ export const Dashboard = () => {
           </button>
 
           <button
-            onClick={() => {}}
+            onClick={() => setShowPaymentModal(true)}
             className="card hover:shadow-xl transition-all duration-200 group"
           >
             <div className="flex items-center gap-4">
@@ -145,7 +198,7 @@ export const Dashboard = () => {
           </button>
 
           <button
-            onClick={() => {}}
+            onClick={() => setShowBalanceQueryModal(true)}
             className="card hover:shadow-xl transition-all duration-200 group"
           >
             <div className="flex items-center gap-4">
@@ -192,6 +245,52 @@ export const Dashboard = () => {
           </div>
         </div>
       </main>
+
+      {/* Modals */}
+      {showRechargeModal && (
+        <RechargeModal
+          onClose={() => setShowRechargeModal(false)}
+          onSuccess={handleRechargeSuccess}
+        />
+      )}
+
+      {showPurchaseModal && (
+        <PurchaseModal
+          onClose={() => setShowPurchaseModal(false)}
+          onSuccess={handlePurchaseSuccess}
+        />
+      )}
+
+      {showPaymentModal && (
+        <PaymentModal
+          onClose={() => setShowPaymentModal(false)}
+          onSuccess={handlePaymentSuccess}
+        />
+      )}
+
+      {showConfirmModal && confirmDataType && (
+        <ConfirmModal
+          type={confirmDataType}
+          onClose={() => {
+            setShowConfirmModal(false);
+            setConfirmDataType(null);
+          }}
+          onSuccess={handleConfirmSuccess}
+        />
+      )}
+
+      {showHistoryModal && (
+        <TransactionHistory
+          onClose={() => setShowHistoryModal(false)}
+          transactions={transactions}
+        />
+      )}
+
+      {showBalanceQueryModal && (
+        <BalanceQueryModal
+          onClose={() => setShowBalanceQueryModal(false)}
+        />
+      )}
     </div>
   );
 };

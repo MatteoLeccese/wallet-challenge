@@ -85,7 +85,7 @@ export class PaymentsService {
 
     // Payer must have sufficient balance
     if (fromBalance < amount) {
-      throw new ForbiddenException('Insufficient balance');
+      throw new BadRequestException('Insufficient balance');
     }
 
     // Create the payment session token
@@ -225,12 +225,10 @@ export class PaymentsService {
 
     return {
       message: 'Payment confirmed successfully',
-      data: {
-        sessionId: session.id,
-        amount: amount.toFixed(2),
-        fromWalletId: fromWallet.id,
-        toWalletId: toWallet.id,
-      },
+      sessionId: session.id,
+      amount: amount.toFixed(2),
+      fromWalletId: fromWallet.id,
+      toWalletId: toWallet.id,
     };
   }
 
@@ -256,7 +254,7 @@ export class PaymentsService {
       throw new BadRequestException('Amount must be greater than zero');
     }
     if (balance < amount) {
-      throw new ForbiddenException('Insufficient balance');
+      throw new BadRequestException('Insufficient balance');
     }
 
     // Generate the payment session token
@@ -343,7 +341,7 @@ export class PaymentsService {
     if (balance < amount) {
       session.status = PaymentSessionStatus.FAILED;
       await this.paymentSessionRepo.save(session);
-      throw new ForbiddenException('Insufficient balance');
+      throw new BadRequestException('Insufficient balance');
     }
 
     // Deduct balance and save
@@ -367,12 +365,10 @@ export class PaymentsService {
 
     return {
       message: 'Purchase confirmed successfully',
-      data: {
-        sessionId: session.id,
-        amount: amount.toFixed(2),
-        walletId: wallet.id,
-        newBalance: wallet.balance,
-      },
+      sessionId: session.id,
+      amount: amount.toFixed(2),
+      walletId: wallet.id,
+      newBalance: wallet.balance,
     };
   }
 
@@ -461,18 +457,16 @@ export class PaymentsService {
 
     return {
       message: 'Specific user balance retrieved successfully',
-      data: {
-        customerId: customer.id,
-        walletId: wallet.id,
-        balance: wallet.balance,
-        transactions: wallet.transactions.map((transaction) => ({
-          id: transaction.id,
-          type: transaction.type,
-          amount: transaction.amount,
-          referenceId: transaction.referenceId,
-          createdAt: transaction.createdAt,
-        })),
-      },
+      customerId: customer.id,
+      walletId: wallet.id,
+      balance: wallet.balance,
+      transactions: wallet.transactions.map((transaction) => ({
+        id: transaction.id,
+        type: transaction.type,
+        amount: transaction.amount,
+        referenceId: transaction.referenceId,
+        createdAt: transaction.createdAt,
+      })),
     };
   }
 }

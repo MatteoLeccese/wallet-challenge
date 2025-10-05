@@ -65,12 +65,10 @@ export class WalletsService {
     // return the result of the operation
     return {
       message: 'Wallet recharged successfully',
-      data: {
-        customerId: customer.id,
-        walletId: customer.wallet.id,
-        newBalance: customer.wallet.balance,
-        transactionId: transaction.id,
-      },
+      customerId: customer.id,
+      walletId: customer.wallet.id,
+      newBalance: customer.wallet.balance,
+      transactionId: transaction.id,
     };
   }
 }
