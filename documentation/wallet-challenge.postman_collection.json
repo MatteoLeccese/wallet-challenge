@@ -1,0 +1,1152 @@
+{
+	"info": {
+		"_postman_id": "4333dcea-ca11-4a94-8f65-020a8813acf5",
+		"name": "wallet-challenge",
+		"description": "This collection contains all the endpoint used in the application and a preview of the requests and expected responses",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19701124"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"document\": \"1\",\r\n  \"names\": \"Maria Lopez\",\r\n  \"email\": \"maria@mail.com\",\r\n  \"phone\": \"0058041278945612\",\r\n  \"password\": \"prettypassword\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url_rest_service}}/auth/register",
+							"host": [
+								"{{api_url_rest_service}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "## Register User\n\nThis endpoint allows new users to register for the application by providing their personal information and credentials. Upon successful registration, the user will receive a confirmation response indicating the success of the operation.\n\n### Request\n\n**Method:** POST  \n**Endpoint:** `{{api_url_rest_service}}/auth/register`\n\n#### Request Body\n\nThe request body must be in JSON format and include the following parameters:\n\n- **document** (string): A unique identifier for the user, typically a document number.\n    \n- **names** (string): The full name of the user.\n    \n- **email** (string): The email address of the user, which will be used for account verification and communication.\n    \n- **phone** (string): The phone number of the user, which can be used for contact purposes.\n    \n- **password** (string): A secure password chosen by the user for account access."
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-system-api-key",
+								"value": "your_system_api_key",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"maria@mail.com\",\r\n    \"password\": \"prettypassword\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url_rest_service}}/auth/login",
+							"host": [
+								"{{api_url_rest_service}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "# Login Endpoint\n\nThis endpoint allows users to authenticate and gain access to the application by providing their credentials.\n\n## Request\n\n- **Method:** POST\n    \n- **Endpoint:** `{{api_url_rest_service}}/auth/login`\n    \n\n### Request Body\n\nThe request body must be in JSON format and should contain the following parameters:\n\n| Parameter | Type | Description |\n| --- | --- | --- |\n| email | string | The user's email address. |\n| password | string | The user's password. |\n\n### Example Request Body\n\n``` json\n{\n  \"email\": \"user@example.com\",\n  \"password\": \"yourpassword\"\n}Important Notes\n\n ```\n\n- Ensure that the email and password are correctly formatted.\n    \n- The endpoint will return an error response if the credentials are invalid.\n    \n- Keep the authentication token secure, as it is required for accessing protected resources."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints corresponding with the auth"
+		},
+		{
+			"name": "payments",
+			"item": [
+				{
+					"name": "top-up-balance",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"document\": \"10\",\r\n  \"phone\": \"005804127894561\",\r\n  \"amount\": 50\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url_rest_service}}/wallets/top-up",
+							"host": [
+								"{{api_url_rest_service}}"
+							],
+							"path": [
+								"wallets",
+								"top-up"
+							]
+						},
+						"description": "## Top-Up Wallet API\n\nThis endpoint allows users to top-up their wallet by providing specific details such as a document identifier, phone number, and the amount to be added.\n\n### HTTP Method\n\n`POST`\n\n### Endpoint\n\n`{{api_url_rest_service}}/wallets/top-up`\n\n### Request Parameters\n\nThe request body must be in JSON format and contain the following parameters:\n\n- **document** (string): A unique identifier for the document associated with the wallet top-up.\n    \n- **phone** (string): The phone number linked to the wallet that is being topped up.\n    \n- **amount** (integer): The amount of money to be added to the wallet.\n    \n\n### Example Request Body\n\n``` json\n{\n  \"document\": \"10\",\n  \"phone\": \"005804127894561\",\n  \"amount\": 50\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "initiate-payment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"toDocument\": \"1\",\r\n    \"toPhone\": \"1234567890\",\r\n    \"amount\": 20\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url_rest_service}}/payments/initiate-payment",
+							"host": [
+								"{{api_url_rest_service}}"
+							],
+							"path": [
+								"payments",
+								"initiate-payment"
+							]
+						},
+						"description": "## Initiate Payment API\n\nThis endpoint is used to initiate a payment process. It requires specific parameters to be included in the request body, which detail the recipient and the payment amount.\n\n### Request Parameters\n\n- **toDocument** (string): The identifier for the recipient's document (e.g., ID number).\n    \n- **toPhone** (string): The phone number of the recipient.\n    \n- **amount** (number): The amount of money to be transferred.\n    \n\n### Request Example\n\n``` json\n{\n  \"toDocument\": \"1\",\n  \"toPhone\": \"1234567890\",\n  \"amount\": 20\n}\n\n ```\n\n### Payment confirmation\n\nTo confirm the payment see the documentation of confirm-payment."
+					},
+					"response": [
+						{
+							"name": "201-payment-session-created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"toDocument\": \"1\",\r\n    \"toPhone\": \"1234567890\",\r\n    \"amount\": 20\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "/payments/initiate-payment",
+									"path": [
+										"payments",
+										"initiate-payment"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "177"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"b1-8fai+Y/nkiiqQde3Ia5LcFuHG60\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 03 Oct 2025 22:18:08 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"statusCode\": 201,\n    \"message\": \"Payment session created and token sent to the registered email\",\n    \"error\": null,\n    \"data\": {\n        \"data\": {\n            \"sessionId\": 4,\n            \"expiresAt\": \"2025-10-03T22:23:08.108Z\"\n        }\n    }\n}"
+						},
+						{
+							"name": "403-insufficient-balance",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"toDocument\": \"1\",\r\n    \"toPhone\": \"1234567890\",\r\n    \"amount\": 200000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url_db_service}}/payments/initiate-payment",
+									"host": [
+										"{{api_url_db_service}}"
+									],
+									"path": [
+										"payments",
+										"initiate-payment"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "83"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"53-r3UFDDjX9ejqkKHuz3ro+vG3w2Q\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 03 Oct 2025 22:19:14 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"statusCode\": 403,\n    \"message\": \"Insufficient balance\",\n    \"error\": \"Forbidden\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "404-receiver-not-found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"toDocument\": \"100\",\r\n    \"toPhone\": \"1234567890\",\r\n    \"amount\": 20\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url_db_service}}/payments/initiate-payment",
+									"host": [
+										"{{api_url_db_service}}"
+									],
+									"path": [
+										"payments",
+										"initiate-payment"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "111"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"6f-ZvJSK+QpcfTHJHBQpQ12tNTuEI8\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 03 Oct 2025 22:19:53 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"statusCode\": 404,\n    \"message\": \"Receiver not found with given document and phone\",\n    \"error\": \"Not Found\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "confirm-payment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"sessionId\": 5,\r\n    \"token\": \"997235\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url_rest_service}}/payments/confirm-payment",
+							"host": [
+								"{{api_url_rest_service}}"
+							],
+							"path": [
+								"payments",
+								"confirm-payment"
+							]
+						},
+						"description": "### Confirm Payment Endpoint\n\nThis endpoint is used to confirm a payment transaction by providing a session ID and a token.\n\n#### Request Parameters\n\n- **sessionId** (integer): The unique identifier for the payment session.\n    \n- **token** (string): A secure token associated with the payment session.\n    \n\n#### Request Body Example\n\n``` json\n{\n  \"sessionId\": 5,\n  \"token\": \"997235\"\n}\n\n ```\n\n#### Notes\n\n- Ensure that the session ID and token are valid before making the request.\n    \n- This is the second endpoint, to see how to initiate a payment see the documentation of \"initiate-payment\"."
+					},
+					"response": [
+						{
+							"name": "201-payment-confirmed",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"sessionId\": 4,\r\n    \"token\": \"997237\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "/payments/confirm-payment",
+									"path": [
+										"payments",
+										"confirm-payment"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "155"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"9b-Wkxz8nqDERVTp4zEp75posWxM3o\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 03 Oct 2025 22:20:17 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"statusCode\": 201,\n    \"message\": \"Payment confirmed successfully\",\n    \"error\": null,\n    \"data\": {\n        \"data\": {\n            \"sessionId\": 4,\n            \"amount\": \"20.00\",\n            \"fromWalletId\": 2,\n            \"toWalletId\": 2\n        }\n    }\n}"
+						},
+						{
+							"name": "404-payment-session-not-found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"sessionId\": 5,\r\n    \"token\": \"997235\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url_db_service}}/payments/confirm-payment",
+									"host": [
+										"{{api_url_db_service}}"
+									],
+									"path": [
+										"payments",
+										"confirm-payment"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "88"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"58-g8iIhuIbnU06FFV3s6ibM5Dzx0g\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 03 Oct 2025 22:20:49 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"statusCode\": 404,\n    \"message\": \"Payment session not found\",\n    \"error\": \"Not Found\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "400-session-expired",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"sessionId\": 5,\r\n    \"token\": \"997235\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url_db_service}}/payments/confirm-payment",
+									"host": [
+										"{{api_url_db_service}}"
+									],
+									"path": [
+										"payments",
+										"confirm-payment"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "92"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"5c-l0FbLwCYtGL7SEcn9i6LkH+kCWU\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 03 Oct 2025 23:46:45 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"statusCode\": 400,\n    \"message\": \"Payment session has expired\",\n    \"error\": \"Bad Request\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "get-balance",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url_rest_service}}/wallets/balance",
+							"host": [
+								"{{api_url_rest_service}}"
+							],
+							"path": [
+								"wallets",
+								"balance"
+							]
+						},
+						"description": "### Get Wallet Balance\n\nThis endpoint retrieves the balance information for the current user's wallet.\n\n#### Request Parameters\n\nThis endpoint does not require any specific request parameters.\n\n#### Note\n\nThis endpoint is useful for users to check their wallet balance and transaction history."
+					},
+					"response": [
+						{
+							"name": "200-success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "/wallets/balance",
+									"path": [
+										"wallets",
+										"balance"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1679"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"68f-T53Vw1dSeucXNNsdAyO65JSaY6Y\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 03 Oct 2025 23:47:54 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"statusCode\": 200,\n    \"message\": \"Balance retrieved successfully\",\n    \"error\": null,\n    \"data\": {\n        \"data\": {\n            \"customerId\": 2,\n            \"walletId\": 2,\n            \"balance\": \"40.00\",\n            \"transactions\": [\n                {\n                    \"id\": 1,\n                    \"type\": \"TOP_UP\",\n                    \"amount\": \"-50.00\",\n                    \"referenceId\": null,\n                    \"createdAt\": \"2025-10-03T19:05:23.174Z\"\n                },\n                {\n                    \"id\": 2,\n                    \"type\": \"TOP_UP\",\n                    \"amount\": \"50.00\",\n                    \"referenceId\": null,\n                    \"createdAt\": \"2025-10-03T19:15:01.094Z\"\n                },\n                {\n                    \"id\": 3,\n                    \"type\": \"TOP_UP\",\n                    \"amount\": \"50.00\",\n                    \"referenceId\": null,\n                    \"createdAt\": \"2025-10-03T19:15:13.337Z\"\n                },\n                {\n                    \"id\": 4,\n                    \"type\": \"PAYMENT\",\n                    \"amount\": \"50.00\",\n                    \"referenceId\": 1,\n                    \"createdAt\": \"2025-10-03T20:36:56.356Z\"\n                },\n                {\n                    \"id\": 5,\n                    \"type\": \"DEBIT\",\n                    \"amount\": \"50.00\",\n                    \"referenceId\": 1,\n                    \"createdAt\": \"2025-10-03T20:36:56.358Z\"\n                },\n                {\n                    \"id\": 9,\n                    \"type\": \"CREDIT\",\n                    \"amount\": \"20.00\",\n                    \"referenceId\": 3,\n                    \"createdAt\": \"2025-10-03T20:53:28.833Z\"\n                },\n                {\n                    \"id\": 10,\n                    \"type\": \"PAYMENT\",\n                    \"amount\": \"20.00\",\n                    \"referenceId\": 4,\n                    \"createdAt\": \"2025-10-03T22:20:17.651Z\"\n                },\n                {\n                    \"id\": 11,\n                    \"type\": \"DEBIT\",\n                    \"amount\": \"20.00\",\n                    \"referenceId\": 4,\n                    \"createdAt\": \"2025-10-03T22:20:17.655Z\"\n                },\n                {\n                    \"id\": 12,\n                    \"type\": \"CREDIT\",\n                    \"amount\": \"20.00\",\n                    \"referenceId\": 4,\n                    \"createdAt\": \"2025-10-03T22:20:17.656Z\"\n                }\n            ],\n            \"outgoingPayments\": [\n                {\n                    \"id\": 1,\n                    \"amount\": \"50.00\",\n                    \"status\": \"CONFIRMED\",\n                    \"createdAt\": \"2025-10-03T20:34:45.260Z\"\n                },\n                {\n                    \"id\": 4,\n                    \"amount\": \"20.00\",\n                    \"status\": \"CONFIRMED\",\n                    \"createdAt\": \"2025-10-03T22:18:08.115Z\"\n                },\n                {\n                    \"id\": 5,\n                    \"amount\": \"20.00\",\n                    \"status\": \"EXPIRED\",\n                    \"createdAt\": \"2025-10-03T22:21:32.551Z\"\n                }\n            ],\n            \"incomingPayments\": [\n                {\n                    \"id\": 2,\n                    \"amount\": \"20.00\",\n                    \"status\": \"EXPIRED\",\n                    \"createdAt\": \"2025-10-03T20:38:48.185Z\"\n                },\n                {\n                    \"id\": 3,\n                    \"amount\": \"20.00\",\n                    \"status\": \"CONFIRMED\",\n                    \"createdAt\": \"2025-10-03T20:53:14.076Z\"\n                },\n                {\n                    \"id\": 4,\n                    \"amount\": \"20.00\",\n                    \"status\": \"CONFIRMED\",\n                    \"createdAt\": \"2025-10-03T22:18:08.115Z\"\n                },\n                {\n                    \"id\": 5,\n                    \"amount\": \"20.00\",\n                    \"status\": \"EXPIRED\",\n                    \"createdAt\": \"2025-10-03T22:21:32.551Z\"\n                }\n            ]\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "get-balance-from-specific-user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"document\": \"1\",\r\n    \"phone\": \"1234567890\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url_rest_service}}/wallets/balance/specific",
+							"host": [
+								"{{api_url_rest_service}}"
+							],
+							"path": [
+								"wallets",
+								"balance",
+								"specific"
+							]
+						},
+						"description": "## Get Specific Wallet Balance\n\nThis endpoint allows users to retrieve the balance of a specific wallet associated with a given document and phone number. It is particularly useful for applications that need to display wallet information to users based on their unique identifiers.\n\n### Request\n\n#### Request Body Parameters\n\n| Parameter | Type | Description |\n| --- | --- | --- |\n| document | string | A unique identifier for the document associated with the wallet. |\n| phone | string | The phone number linked to the wallet for which the balance is being requested. |"
+					},
+					"response": [
+						{
+							"name": "200-success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"document\": \"1\",\r\n    \"phone\": \"1234567890\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "/wallets/balance/specific",
+									"path": [
+										"wallets",
+										"balance",
+										"specific"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1155"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"483-I7JsMZiULc66YDRyDdQ5CVD3oOQ\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 04 Oct 2025 00:12:46 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"statusCode\": 201,\n    \"message\": \"Specific user balance retrieved successfully\",\n    \"error\": null,\n    \"data\": {\n        \"data\": {\n            \"customerId\": 2,\n            \"walletId\": 2,\n            \"balance\": \"30.00\",\n            \"transactions\": [\n                {\n                    \"id\": 1,\n                    \"type\": \"TOP_UP\",\n                    \"amount\": \"-50.00\",\n                    \"referenceId\": null,\n                    \"createdAt\": \"2025-10-03T19:05:23.174Z\"\n                },\n                {\n                    \"id\": 2,\n                    \"type\": \"TOP_UP\",\n                    \"amount\": \"50.00\",\n                    \"referenceId\": null,\n                    \"createdAt\": \"2025-10-03T19:15:01.094Z\"\n                },\n                {\n                    \"id\": 3,\n                    \"type\": \"TOP_UP\",\n                    \"amount\": \"50.00\",\n                    \"referenceId\": null,\n                    \"createdAt\": \"2025-10-03T19:15:13.337Z\"\n                },\n                {\n                    \"id\": 4,\n                    \"type\": \"PAYMENT\",\n                    \"amount\": \"50.00\",\n                    \"referenceId\": 1,\n                    \"createdAt\": \"2025-10-03T20:36:56.356Z\"\n                },\n                {\n                    \"id\": 5,\n                    \"type\": \"DEBIT\",\n                    \"amount\": \"50.00\",\n                    \"referenceId\": 1,\n                    \"createdAt\": \"2025-10-03T20:36:56.358Z\"\n                },\n                {\n                    \"id\": 9,\n                    \"type\": \"CREDIT\",\n                    \"amount\": \"20.00\",\n                    \"referenceId\": 3,\n                    \"createdAt\": \"2025-10-03T20:53:28.833Z\"\n                },\n                {\n                    \"id\": 10,\n                    \"type\": \"PAYMENT\",\n                    \"amount\": \"20.00\",\n                    \"referenceId\": 4,\n                    \"createdAt\": \"2025-10-03T22:20:17.651Z\"\n                },\n                {\n                    \"id\": 11,\n                    \"type\": \"DEBIT\",\n                    \"amount\": \"20.00\",\n                    \"referenceId\": 4,\n                    \"createdAt\": \"2025-10-03T22:20:17.655Z\"\n                },\n                {\n                    \"id\": 12,\n                    \"type\": \"CREDIT\",\n                    \"amount\": \"20.00\",\n                    \"referenceId\": 4,\n                    \"createdAt\": \"2025-10-03T22:20:17.656Z\"\n                },\n                {\n                    \"id\": 13,\n                    \"type\": \"PURCHASE\",\n                    \"amount\": \"10.00\",\n                    \"referenceId\": 6,\n                    \"createdAt\": \"2025-10-04T00:03:50.055Z\"\n                }\n            ]\n        }\n    }\n}"
+						},
+						{
+							"name": "404-customer-not-found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"document\": \"1\",\r\n    \"phone\": \"12345678901\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url_db_service}}/wallets/balance/specific",
+									"host": [
+										"{{api_url_db_service}}"
+									],
+									"path": [
+										"wallets",
+										"balance",
+										"specific"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "111"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"6f-JloWon+XjX/X5nntyDxROwvVDXI\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 04 Oct 2025 00:12:16 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"statusCode\": 404,\n    \"message\": \"Customer not found with given document and phone\",\n    \"error\": \"Not Found\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "initiate-purchase",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"amount\": 100000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url_rest_service}}/payments/initiate-purchase",
+							"host": [
+								"{{api_url_rest_service}}"
+							],
+							"path": [
+								"payments",
+								"initiate-purchase"
+							]
+						},
+						"description": "## Initiate Purchase\n\nThis endpoint is used to initiate a purchase transaction. It requires a JSON payload containing the amount to be processed.\n\n#### Request Body\n\nThe request body must be in JSON format and include the following parameter:\n\n- **amount** (integer): The total amount for the purchase.\n    \n\n**Note:**  \nTo confirm the purchase you can see the documentation of \"confirm-purchase\""
+					},
+					"response": [
+						{
+							"name": "201-success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"amount\": 10\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "/payments/initiate-purchase",
+									"path": [
+										"payments",
+										"initiate-purchase"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "168"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"a8-jSeSvQb8/5JD+ma8e1Vs+/S1r0c\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 03 Oct 2025 23:58:55 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"statusCode\": 201,\n    \"message\": \"Purchase session created and token sent to your email\",\n    \"error\": null,\n    \"data\": {\n        \"data\": {\n            \"sessionId\": 6,\n            \"expiresAt\": \"2025-10-04T00:03:55.796Z\"\n        }\n    }\n}"
+						},
+						{
+							"name": "403-insufficient-balance",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"amount\": 100000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_url_db_service}}/payments/initiate-purchase",
+									"host": [
+										"{{api_url_db_service}}"
+									],
+									"path": [
+										"payments",
+										"initiate-purchase"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "83"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"53-r3UFDDjX9ejqkKHuz3ro+vG3w2Q\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 03 Oct 2025 23:59:18 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"statusCode\": 403,\n    \"message\": \"Insufficient balance\",\n    \"error\": \"Forbidden\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "confirm-purchase",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"sessionId\": 6,\r\n    \"token\": \"864572\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url_rest_service}}/payments/confirm-purchase",
+							"host": [
+								"{{api_url_rest_service}}"
+							],
+							"path": [
+								"payments",
+								"confirm-purchase"
+							]
+						},
+						"description": "### Confirm Purchase API\n\nThis endpoint is used to confirm a purchase by processing the payment associated with a given session ID and token.\n\n#### Request Body\n\n- `sessionId` (integer): The unique identifier for the user's session.\n    \n- `token` (string): A token representing the payment authorization.\n    \n\n#### Note\n\nTo initiate the purchase you can see the documentation of \"initiate-purchase\"."
+					},
+					"response": [
+						{
+							"name": "201-success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"sessionId\": 6,\r\n    \"token\": \"864572\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "/payments/confirm-purchase",
+									"path": [
+										"payments",
+										"confirm-purchase"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "158"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"9e-wiCQG6z9FyBWLFg2IpF7IpClGT4\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 04 Oct 2025 00:03:50 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"statusCode\": 201,\n    \"message\": \"Purchase confirmed successfully\",\n    \"error\": null,\n    \"data\": {\n        \"data\": {\n            \"sessionId\": 6,\n            \"amount\": \"10.00\",\n            \"walletId\": 2,\n            \"newBalance\": \"30.00\"\n        }\n    }\n}"
+						}
+					]
+				}
+			],
+			"description": "All the endpoints corresponding to the to the payments"
+		}
+	]
+}
