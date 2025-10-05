@@ -21,7 +21,11 @@ export class CreateTransactionsTable1759436489769
             isGenerated: true,
             generationStrategy: 'increment',
           },
-          { name: 'type', type: 'enum', enum: ['TOP_UP', 'PAYMENT'] },
+          {
+            name: 'type',
+            type: 'enum',
+            enum: ['TOP_UP', 'PURCHASE', 'PAYMENT', 'DEBIT', 'CREDIT'],
+          },
           { name: 'amount', type: 'decimal', precision: 15, scale: 2 },
           { name: 'walletId', type: 'int', isNullable: true },
           {

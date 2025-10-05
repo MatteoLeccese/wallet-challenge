@@ -25,10 +25,7 @@ export class PaymentsController {
 
   @UseGuards(JwtAuthGuard)
   @Post('confirm-payment')
-  confirm(
-    @CurrentUser() user: CurrentUserData,
-    @Body() dto: ConfirmPaymentDto,
-  ) {
+  confirm(@Body() dto: ConfirmPaymentDto) {
     return this.paymentsService.confirmPayment(dto);
   }
 
