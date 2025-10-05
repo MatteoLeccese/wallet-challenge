@@ -34,7 +34,9 @@ export const ConfirmModal = ({ type, onClose, onSuccess }: ConfirmModalProps) =>
     setLoading(true);
 
     try {
-      const response = await apiService.confirmPurchaseTransaction({ sessionId, token });
+      const response = type === 'purchase'
+        ? await apiService.confirmPurchaseTransaction({ sessionId, token })
+        : await apiService.confirmPaymentTransaction({ sessionId, token });
 
       showToast(response?.message ?? 'Transaction confirmed', 'success');
       onSuccess();
